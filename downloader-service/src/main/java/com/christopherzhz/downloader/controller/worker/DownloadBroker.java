@@ -1,4 +1,4 @@
-package com.christopherzhz.downloader.controller.broker;
+package com.christopherzhz.downloader.controller.worker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,18 +15,16 @@ public class DownloadBroker extends Thread {
     private static Logger LOG = LoggerFactory.getLogger(DownloadBroker.class.getName());
 
     private int threadCnt;
-    private int blockSize;
-    private int start;
-    private int end;
+    private long start;
+    private long end;
     private File destFile;
     private URL url;
     private int TIMEOUT;
 
-    public DownloadBroker(int threadCnt, int blockSize, File destFile, URL url, int timeout) {
+    public DownloadBroker(int threadCnt, long start, long end, File destFile, URL url, int timeout) {
         this.threadCnt = threadCnt;
-        this.blockSize = blockSize;
-        start = blockSize * threadCnt;
-        end = start + blockSize - 1;
+        this.start = start;
+        this.end = end;
         this.destFile = destFile;
         this.url = url;
         this.TIMEOUT = timeout;
@@ -48,7 +46,8 @@ public class DownloadBroker extends Thread {
             conn.setReadTimeout(TIMEOUT);
             conn.connect();
 
-            int size = conn.getHeaderFieldInt("Content-Length", -1);
+            long size = conn.getHeaderFieldLong("Content-Length", -1);
+            long blockSize = end - start + 1;
             if (size != blockSize) return false;
 
 //            if (out == null) {
