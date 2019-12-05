@@ -1,26 +1,24 @@
 package com.christopherzhz.downloader.controller.worker;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.christopherzhz.downloader.utils.Constant.*;
 import static com.christopherzhz.downloader.utils.DownloaderUtils.*;
 
+@AllArgsConstructor
 public class ProgressMonitor extends Thread {
 
-    private static Logger LOG = LoggerFactory.getLogger(ProgressMonitor.class.getName());
+    private static Logger LOG = LoggerFactory.getLogger(ProgressMonitor.class.getSimpleName());
 
     private AtomicLong downloadedSize;
-    private Object waiting;
+    private AtomicInteger runningThreads;
+    private Object monitorLock;
     private long totalSize;
-
-    public ProgressMonitor(AtomicLong downloadedSize, Object waiting, long totalSize) {
-        this.downloadedSize = downloadedSize;
-        this.waiting = waiting;
-        this.totalSize = totalSize;
-    }
 
     @Override
     public void run() {
@@ -35,17 +33,18 @@ public class ProgressMonitor extends Thread {
 
             sizeCurr = downloadedSize.get();
             String speedStr = genFileSizeString(sizeCurr - sizeLastSec);
-            String msg = String.format("[Downloading] %s / %s (%.2fd%%)  |  %s/s",
+            String msg = String.format("[Downloading] %s / %s (%.2f%%)  |  %s/s",
                     genFileSizeString(sizeCurr), totalSizeStr, sizeCurr / (float)totalSize * 100, speedStr);
             LOG.info(msg);
 
             sizeLastSec = sizeCurr;
 
-//            if (/* check if downloading done */) {
-//                synchronized (waiting) {
-//                    waiting.notifyAll();
-//                }
-//            }
+            // notify Downloader download finished
+            if (runningThreads.get() == 0) {
+                synchronized (monitorLock) {
+                    monitorLock.notifyAll();
+                }
+            }
         }
     }
 }

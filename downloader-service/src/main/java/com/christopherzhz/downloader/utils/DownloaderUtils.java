@@ -13,10 +13,6 @@ public class DownloaderUtils {
         return String.format("bytes=%d-%d", start, end);
     }
 
-    public static String genRangeString(long start) {
-        return String.format("bytes=%d-", start);
-    }
-
     public static String getFileNameByUrl(String url) {
         return url.substring(url.lastIndexOf('/') + 1);
     }
@@ -32,8 +28,14 @@ public class DownloaderUtils {
         return String.format("%.2f %s", size, SIZE_UNITS[u]);
     }
 
+    public static int optimizeNThreads(int nThreads) {
+        // TODO: if nthreads is too ridiculous with given file size, change it
+        // ...
+        return nThreads;
+    }
+
     public static int estimateTimeout(long fileSize) {
-        return Constant.DEFAULT_TIMEOUT;
+        return castToInt(fileSize / SIZE_THRESH);
     }
 
     public static int castToInt(long num) {
