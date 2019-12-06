@@ -10,7 +10,8 @@ public class DownloaderUtils {
 //    }
 
     public static String genRangeString(long start, long end) {
-        return String.format("bytes=%d-%d", start, end);
+        return end < 0 ? String.format("bytes=%d-", start, end) :
+                String.format("bytes=%d-%d", start, end);
     }
 
     public static String getFileNameByUrl(String url) {
@@ -44,5 +45,10 @@ public class DownloaderUtils {
     }
 
     private static final String[] SIZE_UNITS = {"KB","MB","GB","TB"};
+
+    // for testing purpose
+    public static void main(String[] args) {
+        System.out.println(genFileSizeString(100*1024*1024));
+    }
 
 }

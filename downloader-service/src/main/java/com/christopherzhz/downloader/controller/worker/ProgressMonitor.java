@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.christopherzhz.downloader.utils.Constant.*;
 import static com.christopherzhz.downloader.utils.DownloaderUtils.*;
 
 @AllArgsConstructor
@@ -23,7 +22,7 @@ public class ProgressMonitor extends Thread {
     @Override
     public void run() {
         String totalSizeStr = genFileSizeString(totalSize);
-        long sizeCurr = 0, sizeLastSec = 0;
+        long sizeCurr, sizeLastSec = 0;
         while (true) {
             try {
                 Thread.sleep(1000);
@@ -39,7 +38,7 @@ public class ProgressMonitor extends Thread {
 
             sizeLastSec = sizeCurr;
 
-            // notify Downloader download finished
+            // notify Downloader that download finished
             if (runningThreads.get() == 0) {
                 synchronized (monitorLock) {
                     monitorLock.notifyAll();

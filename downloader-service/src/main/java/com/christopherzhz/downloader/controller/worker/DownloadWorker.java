@@ -73,8 +73,8 @@ public class DownloadWorker extends Thread {
                 // read and write to the file
                 while ((i = in.read(buffer)) != -1) {
                     raf.write(buffer, 0, i);
+                    downloadedSize.addAndGet(i);
                 }
-                downloadedSize.addAndGet(blockSize);
             }
         } catch (SocketTimeoutException ste) {
             LOG.error("[SocketTimeoutException] threadCnt = " + threadCnt);

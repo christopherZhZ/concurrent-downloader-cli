@@ -94,6 +94,7 @@ public class Downloader {
     private void initConnection() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(READ_TIMEOUT);
+        conn.setRequestProperty(RANGE, genRangeString(0, -1));
         int trying = 0, resCode;
         while (trying < MAX_CONNECT_ATTEMPTS) {
             try {
