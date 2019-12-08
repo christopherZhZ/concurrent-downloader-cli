@@ -30,6 +30,8 @@ def downloader(url, c):
         printer.err('The Spring Boot server might be down.')
         return
     json_resp = resp.json()
+    printer.new_line()
+    print(json_resp)
     if json_resp['status'] == 'fail':
         printer.fail('DOWNLOAD FAILED!')
         printer.err(json_resp['message'])

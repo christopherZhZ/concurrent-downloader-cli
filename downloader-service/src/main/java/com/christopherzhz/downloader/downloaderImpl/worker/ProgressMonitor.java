@@ -32,7 +32,7 @@ public class ProgressMonitor extends Thread {
 
             sizeCurr = downloadedSize.get();
             String speedStr = genFileSizeString(sizeCurr - sizeLastSec);
-            String msg = String.format("[Downloading] %s / %s (%.2f%%)  |  %s/s",
+            String msg = String.format("[Monitor] %s / %s (%.1f%%)  |  %s/s",
                     genFileSizeString(sizeCurr), totalSizeStr, sizeCurr / (float)totalSize * 100, speedStr);
             LOG.info(msg);
 

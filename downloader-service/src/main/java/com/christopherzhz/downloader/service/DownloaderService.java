@@ -1,6 +1,8 @@
 package com.christopherzhz.downloader.service;
 
 import com.christopherzhz.downloader.downloaderImpl.Downloader;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 import static com.christopherzhz.downloader.utils.Constant.*;
 
@@ -25,17 +28,18 @@ public class DownloaderService {
             return resp;
         }
     }
-    private DownloaderResp success() {
-        return DownloaderResp.create(true, "");
+    private CompletableFuture<DownloaderResp> success() {
+        return CompletableFuture.completedFuture(DownloaderResp.create(true, ""));
     }
-    private DownloaderResp fail(String msg) {
-        return DownloaderResp.create(false, msg);
+    private CompletableFuture<DownloaderResp> fail(String msg) {
+        return CompletableFuture.completedFuture(DownloaderResp.create(false, msg));
     }
 
     @PostMapping("/download")
-    public DownloaderResp download(@RequestParam String url,
-                                   @RequestParam String destDir,
-                                   @RequestParam int nThreads) {
+    @Async("asyncExecutor")
+    public CompletableFuture<DownloaderResp> download(@RequestParam String url,
+                                                      @RequestParam String destDir,
+                                                      @RequestParam int nThreads) {
         try {
             Downloader downloader = new Downloader(url, destDir, nThreads);
             downloader.download();

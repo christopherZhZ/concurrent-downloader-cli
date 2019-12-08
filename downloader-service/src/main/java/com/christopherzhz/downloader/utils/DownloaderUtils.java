@@ -46,7 +46,7 @@ public class DownloaderUtils {
 
     private static final String[] SIZE_UNITS = {"KB","MB","GB","TB"};
 
-    // for testing purpose
+    // for testing purpose\
     public static void main(String[] args) {
         System.out.println(genFileSizeString(100*1024*1024));
     }
