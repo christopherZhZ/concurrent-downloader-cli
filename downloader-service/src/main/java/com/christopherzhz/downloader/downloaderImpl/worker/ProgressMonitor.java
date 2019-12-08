@@ -1,6 +1,7 @@
 package com.christopherzhz.downloader.downloaderImpl.worker;
 
 import lombok.AllArgsConstructor;
+import me.tongfei.progressbar.ProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +22,10 @@ public class ProgressMonitor extends Thread {
 
     @Override
     public void run() {
+        ProgressBar pb = new ProgressBar("Downloader", 100);
         String totalSizeStr = genFileSizeString(totalSize);
         long sizeCurr, sizeLastSec = 0;
+        double percentage;
         while (true) {
             try {
                 Thread.sleep(1000);
@@ -32,10 +35,13 @@ public class ProgressMonitor extends Thread {
 
             sizeCurr = downloadedSize.get();
             String speedStr = genFileSizeString(sizeCurr - sizeLastSec);
-            String msg = String.format("[Monitor] %s / %s (%.1f%%)  |  %s/s",
-                    genFileSizeString(sizeCurr), totalSizeStr, sizeCurr / (float)totalSize * 100, speedStr);
-            LOG.info(msg);
+//            String msg = String.format("[Monitor] %s / %s (%.1f%%)  |  %s/s",
+//                    genFileSizeString(sizeCurr), totalSizeStr, sizeCurr / (double)totalSize * 100, speedStr);
+//            LOG.info(msg);
 
+            percentage = sizeCurr / (double)totalSize * 100;
+            pb.stepTo((long)Math.floor(percentage));
+            pb.setExtraMessage(String.format("Downloading...  |  %s / %s", genFileSizeString(sizeCurr), totalSizeStr));
             sizeLastSec = sizeCurr;
 
             // notify Downloader that download finished
@@ -46,5 +52,6 @@ public class ProgressMonitor extends Thread {
                 break;
             }
         }
+        pb.close();
     }
 }

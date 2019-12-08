@@ -1,7 +1,6 @@
 import click
 import requests
 import os
-import sys
 from cli_helper import printer
 from cli_config import *
 
@@ -25,13 +24,12 @@ def downloader(url, c):
     try:
         resp = requests.post(downloader_url, params=payload)
     except:
-        e = sys.exc_info()[0];
-        printer.err(e)
+        printer.fail('DOWNLOAD FAILED!')
         printer.err('The Spring Boot server might be down.')
         return
     json_resp = resp.json()
     printer.new_line()
-    print(json_resp)
+    # print(json_resp)
     if json_resp['status'] == 'fail':
         printer.fail('DOWNLOAD FAILED!')
         printer.err(json_resp['message'])

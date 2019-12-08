@@ -32,8 +32,13 @@ public class Downloader {
     private long fileSize;
     private boolean hasResumeFeature;
 
+    // a lock object for monitor
     @ToString.Exclude private Object monitorLock = new Object();
+
+    // an atomic size accumulator representing downloaded file size
     @ToString.Exclude AtomicLong downloadedSize = new AtomicLong(0);
+
+    // an atomic counter of active threads for the current task
     @ToString.Exclude AtomicInteger runningThreads = new AtomicInteger(0);
 
     public Downloader(String url, String destDir, int nThreads)
