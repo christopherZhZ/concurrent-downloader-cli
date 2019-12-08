@@ -1,7 +1,7 @@
-package com.christopherzhz.downloader.controller;
+package com.christopherzhz.downloader.downloaderImpl;
 
-import com.christopherzhz.downloader.controller.worker.DownloadWorker;
-import com.christopherzhz.downloader.controller.worker.ProgressMonitor;
+import com.christopherzhz.downloader.downloaderImpl.worker.DownloadWorker;
+import com.christopherzhz.downloader.downloaderImpl.worker.ProgressMonitor;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,8 @@ public class Downloader {
     @ToString.Exclude AtomicLong downloadedSize = new AtomicLong(0);
     @ToString.Exclude AtomicInteger runningThreads = new AtomicInteger(0);
 
-    public Downloader(String url, String destDir, int nThreads) throws MalformedURLException {
+    public Downloader(String url, String destDir, int nThreads)
+            throws MalformedURLException {
         if (StringUtils.isEmpty(url) || StringUtils.isEmpty(destDir) || nThreads < 1) {
             throw new IllegalArgumentException("Invalid URL / destDir / nThreads");
         }
@@ -49,13 +50,23 @@ public class Downloader {
         this.NTHREADS = optimizeNThreads(nThreads);
     }
 
-    public void download() throws IOException {
+    public void download() throws IOException, InterruptedException {
         // initialize connection
         initConnection();
 
         // log basic info
         LOG.debug("[------TARGET FILE INFO------] " + this.toString());
 
+        if (fileSize < LARGE_FILE_LINE) {
+            regularFileDownload();
+        } else {
+            veryLargeFileDownload();
+        }
+
+        LOG.debug("[------DOWNLOAD FINISHED------] ");
+    }
+
+    private void regularFileDownload() throws IOException, InterruptedException {
         // create a file in destination directory with the same length and name
         RandomAccessFile raf = new RandomAccessFile(destFile, "rw");
         raf.setLength(fileSize);
@@ -73,7 +84,6 @@ public class Downloader {
                     long end = threadCnt == NTHREADS - 1 ? fileSize - 1 : start + blockSize - 1;
                     new DownloadWorker(threadCnt, start, end, destFile, url, downloadedSize, runningThreads)
                         .start();
-                    // TODO: add thread pool later
                 });
         }
 
@@ -87,8 +97,12 @@ public class Downloader {
             }
         } catch (InterruptedException ie) {
             LOG.error("[InterruptedException] Download interrupted!");
-            // TODO: error handling
+            throw ie;
         }
+    }
+
+    private void veryLargeFileDownload() throws IOException, InterruptedException {
+        // TODO: very large file download approach
     }
 
     private void initConnection() throws IOException {
@@ -102,7 +116,7 @@ public class Downloader {
                 resCode = conn.getResponseCode();
 
                 if (resCode == 403) {
-                    // TODO: fake as browser
+                    // TODO: fake as browser if possible
                 }
                 hasResumeFeature = resCode == 206;
                 LOG.debug("initConnection: res code: " + conn.getResponseCode());
@@ -111,6 +125,9 @@ public class Downloader {
                 LOG.error("[ConnectException] Connection failed! Retrying..");
                 trying++;
             }
+        }
+        if (trying == MAX_CONNECT_ATTEMPTS) {
+            throw new ConnectException("Cannot connect to the given URL");
         }
         fileSize = conn.getContentLengthLong();
         LOG.debug("Connection established!");
@@ -127,7 +144,7 @@ public class Downloader {
     }
 
     // for testing purpose
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         String testDestPath = "/Users/frankmac/Downloads";
         new Downloader(URL_100MB, testDestPath, 5).download();
     }

@@ -1,0 +1,4 @@
+
+        [console_scripts]
+        downloader=downloader_cli:downloader
+    

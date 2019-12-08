@@ -1,4 +1,4 @@
-package com.christopherzhz.downloader.controller.worker;
+package com.christopherzhz.downloader.downloaderImpl.worker;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -43,6 +43,7 @@ public class ProgressMonitor extends Thread {
                 synchronized (monitorLock) {
                     monitorLock.notifyAll();
                 }
+                break;
             }
         }
     }

@@ -20,7 +20,7 @@ public class DownloaderUtils {
 
     public static String genFileSizeString(long bytes) {
         if (bytes < 1024) return bytes + " B";
-        float size = (float) bytes;
+        double size = (double) bytes;
         int u = -1;
         do {
             size /= SIZE_THRESH;

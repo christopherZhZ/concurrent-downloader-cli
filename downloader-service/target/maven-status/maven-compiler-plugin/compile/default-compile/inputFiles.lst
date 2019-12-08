@@ -1,0 +1,8 @@
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/service/DownloaderService.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/utils/Constant.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/downloaderImpl/worker/ProgressMonitor.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/downloaderImpl/Downloader.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/DownloaderServiceApplication.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/downloaderImpl/worker/DownloadWorker.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/utils/DownloaderUtils.java
+/Users/frankmac/Documents/library-workspace/concurrent-downloader-cli/downloader-service/src/main/java/com/christopherzhz/downloader/downloaderImpl/LargeFileDownloader.java
