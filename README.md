@@ -11,7 +11,7 @@ pip install -- editable .
 ```
 ### Usage
 
-- Go to /concurrent-downloader-cli/downloader-service in terminal
+- Go to `/concurrent-downloader-cli/downloader-service` in terminal
 - Run: (Make sure Maven is installed and `mvn` cli is added to $PATH)
 ```sh
 mvn spring-boot:run
