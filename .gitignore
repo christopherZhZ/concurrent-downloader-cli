@@ -2,7 +2,7 @@
 .idea
 *.pyc
 *.sh
-/target
+downloader-service/target
 *.egg-info
 *.egg
 *.log
