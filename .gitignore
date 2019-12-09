@@ -5,4 +5,5 @@
 /target
 *.egg-info
 *.egg
+*.log
 MANIFEST
