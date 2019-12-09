@@ -1,8 +1,0 @@
-README.md
-setup.py
-concurrent_downloader_cli.egg-info/PKG-INFO
-concurrent_downloader_cli.egg-info/SOURCES.txt
-concurrent_downloader_cli.egg-info/dependency_links.txt
-concurrent_downloader_cli.egg-info/entry_points.txt
-concurrent_downloader_cli.egg-info/requires.txt
-concurrent_downloader_cli.egg-info/top_level.txt
