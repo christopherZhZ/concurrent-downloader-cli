@@ -26,3 +26,4 @@ to download the file to the current directory.
 
 - In the terminal which runs spring boot server, you can view the download progress:
 
+![alt text](./screenshots/screenshot-monitor.png)
