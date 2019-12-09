@@ -1,7 +1,7 @@
 # concurrent-downloader-cli
 A command line tool for concurrently downloading file with given url.
 
-### Install
+## Installation
 
 - Clone the project
 - Go to project's root directory in terminal
@@ -9,7 +9,7 @@ A command line tool for concurrently downloading file with given url.
 ```sh
 pip install -- editable .
 ```
-### Usage
+## Usage
 
 - Go to `/concurrent-downloader-cli/downloader-service` in terminal
 - Run: (Make sure Maven is installed and `mvn` cli is added to $PATH)
@@ -23,3 +23,6 @@ downloader <URL>
 downloader <URL> -c <nThreads>
 ```
 to download the file to the current directory.
+
+- In the terminal which runs spring boot server, you can view the download progress:
+
