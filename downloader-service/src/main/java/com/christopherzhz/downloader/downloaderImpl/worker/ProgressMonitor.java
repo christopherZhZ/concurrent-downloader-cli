@@ -18,14 +18,17 @@ public class ProgressMonitor extends Thread {
     private AtomicLong downloadedSize;
     private AtomicInteger runningThreads;
     private Object monitorLock;
+
     private long totalSize;
+    private String fileName;
 
     @Override
     public void run() {
-        ProgressBar pb = new ProgressBar("Downloader", 100);
+        System.out.println(String.format("Start downloading file: '%s'", fileName));
+        ProgressBar pb = new ProgressBar("Downloading", 100);
         String totalSizeStr = genFileSizeString(totalSize);
         long sizeCurr, sizeLastSec = 0;
-        double percentage;
+        int percentage;
         while (true) {
             try {
                 Thread.sleep(1000);
@@ -34,14 +37,13 @@ public class ProgressMonitor extends Thread {
             }
 
             sizeCurr = downloadedSize.get();
-            String speedStr = genFileSizeString(sizeCurr - sizeLastSec);
-//            String msg = String.format("[Monitor] %s / %s (%.1f%%)  |  %s/s",
-//                    genFileSizeString(sizeCurr), totalSizeStr, sizeCurr / (double)totalSize * 100, speedStr);
-//            LOG.info(msg);
+            String deltaSize = genFileSizeString(sizeCurr - sizeLastSec);
+            String tailMessage = String.format("[%s / %s]  %s/s",
+                    genFileSizeString(sizeCurr), totalSizeStr, deltaSize);
+            percentage = (int)Math.floor(sizeCurr / (double)totalSize * 100);
 
-            percentage = sizeCurr / (double)totalSize * 100;
-            pb.stepTo((long)Math.floor(percentage));
-            pb.setExtraMessage(String.format("Downloading...  |  %s / %s", genFileSizeString(sizeCurr), totalSizeStr));
+            pb.stepTo(percentage);
+            pb.setExtraMessage(tailMessage);
             sizeLastSec = sizeCurr;
 
             // notify Downloader that download finished
@@ -53,5 +55,6 @@ public class ProgressMonitor extends Thread {
             }
         }
         pb.close();
+        System.out.println(String.format("Download completed for file: '%s' ", fileName));
     }
 }

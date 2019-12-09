@@ -14,6 +14,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
@@ -31,6 +32,7 @@ public class Downloader {
     private int NTHREADS;
     private long fileSize;
     private boolean hasResumeFeature;
+    private String taskID;
 
     // a lock object for monitor
     @ToString.Exclude private Object monitorLock = new Object();
@@ -53,6 +55,7 @@ public class Downloader {
         this.url = new URL(processedUrl);
         this.destFile = new File(fullPath);
         this.NTHREADS = optimizeNThreads(nThreads);
+        this.taskID = UUID.randomUUID().toString();
     }
 
     public void download() throws IOException, InterruptedException {
@@ -93,7 +96,7 @@ public class Downloader {
         }
 
         // start progress monitor thread
-        startMonitoring();
+        startMonitoring(destFile.getName());
 
         // wait for progress monitor to notify the completion
         try {
@@ -121,7 +124,7 @@ public class Downloader {
                 resCode = conn.getResponseCode();
 
                 if (resCode == 403) {
-                    // TODO: fake as browser if possible
+                    // TODO: fake as browser
                 }
                 hasResumeFeature = resCode == 206;
                 LOG.debug("initConnection: res code: " + conn.getResponseCode());
@@ -142,8 +145,8 @@ public class Downloader {
         return !hasResumeFeature || fileSize < MIN_BYTES_TO_SPLIT_THREAD || NTHREADS == 1;
     }
 
-    private void startMonitoring() {
-        ProgressMonitor pm = new ProgressMonitor(downloadedSize, runningThreads, monitorLock, fileSize);
+    private void startMonitoring(String fileName) {
+        ProgressMonitor pm = new ProgressMonitor(downloadedSize, runningThreads, monitorLock, fileSize, fileName);
         pm.setDaemon(true);
         pm.start();
     }

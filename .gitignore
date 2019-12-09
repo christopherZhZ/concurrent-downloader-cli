@@ -3,3 +3,6 @@
 *.pyc
 *.sh
 /target
+*.egg-info
+*.egg
+MANIFEST

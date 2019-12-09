@@ -74,6 +74,7 @@ public class DownloadWorker extends Thread {
                 while ((i = in.read(buffer)) != -1) {
                     raf.write(buffer, 0, i);
                     downloadedSize.addAndGet(i);
+                    // TODO: resume when connection failed and re-connected
                 }
             }
         } catch (SocketTimeoutException ste) {

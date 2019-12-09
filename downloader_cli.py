@@ -22,6 +22,7 @@ def downloader(url, c):
     payload = {'url': url, 'destDir': os.getcwd(), 'nThreads': nThreads}
     resp = None
     try:
+        printer.general('START DOWNLOADING')
         resp = requests.post(downloader_url, params=payload)
     except:
         printer.fail('DOWNLOAD FAILED!')
