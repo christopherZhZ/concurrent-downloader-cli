@@ -1,5 +1,7 @@
 package com.christopherzhz.downloader.utils;
 
+import org.springframework.util.StringUtils;
+
 import static com.christopherzhz.downloader.utils.Constant.*;
 
 public class DownloaderUtils {
@@ -15,7 +17,8 @@ public class DownloaderUtils {
     }
 
     public static String getFileNameByUrl(String url) {
-        return url.substring(url.lastIndexOf('/') + 1);
+        String lastSegment = StringUtils.getFilename(url);
+        return lastSegment.substring(0, lastSegment.indexOf('?'));
     }
 
     public static String genFileSizeString(long bytes) {
@@ -48,7 +51,7 @@ public class DownloaderUtils {
 
     // for testing purpose\
     public static void main(String[] args) {
-        System.out.println(genFileSizeString(100*1024*1024));
+        System.out.println(getFileNameByUrl("http://mirror.filearena.net/pub/speed/SpeedTest_32MB.dat?_ga=2.160681917.1281845165.1575751193-1985933931.1575751193"));
     }
 
 }
