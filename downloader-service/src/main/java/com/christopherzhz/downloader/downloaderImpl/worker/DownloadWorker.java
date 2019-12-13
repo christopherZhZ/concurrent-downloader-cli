@@ -75,11 +75,14 @@ public class DownloadWorker extends Thread {
         // if resume after network recovery
         long localDownloaded = localDownloadedSize.get();
         boolean resumeAfterRecovery = localDownloaded > 0;
+        long actualStart;
         if (resumeAfterRecovery) {
-            start = localDownloaded;
+            actualStart = start + localDownloaded;
             LOG.debug("partialDownload (resume): globalDownloaded = " + downloadedSize.get());
             LOG.debug("partialDownload (resume): localDownloaded = " + localDownloaded);
             LOG.debug("partialDownload (resume): start = " + start);
+        } else {
+            actualStart = start;
         }
 
         try {
@@ -87,10 +90,10 @@ public class DownloadWorker extends Thread {
             conn.setConnectTimeout(CONNECT_TIMEOUT);
             conn.setReadTimeout(READ_TIMEOUT);
             conn.setRequestMethod(GET);
-            conn.setRequestProperty(RANGE, genRangeString(start, end));
+            conn.setRequestProperty(RANGE, genRangeString(actualStart, end));
 
             long size = conn.getHeaderFieldLong("Content-Length", -1);
-            long blockSize = end - start + 1;
+            long blockSize = end - actualStart + 1;
             if (!resumeAfterRecovery && size != blockSize) {
                 LOG.error("Unexpected block size!");
                 return false;
@@ -101,7 +104,7 @@ public class DownloadWorker extends Thread {
             if (conn.getResponseCode() == 206) {
                 RandomAccessFile raf = new RandomAccessFile(destFile, "rw");
                 // move the pointer to this worker's part
-                raf.seek(start);
+                raf.seek(actualStart);
                 InputStream in = conn.getInputStream();
                 byte buffer[] = new byte[1024];
                 int i;
