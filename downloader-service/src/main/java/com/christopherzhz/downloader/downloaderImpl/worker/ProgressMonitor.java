@@ -10,6 +10,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static com.christopherzhz.downloader.utils.DownloaderUtils.*;
 
+/**
+ * ProgressMonitor is a thread that monitors the download progress of tasks
+ */
 @AllArgsConstructor
 public class ProgressMonitor extends Thread {
 
@@ -17,7 +20,7 @@ public class ProgressMonitor extends Thread {
 
     private AtomicLong downloadedSize;
     private AtomicInteger runningThreads;
-    private Object monitorLock;
+    private final Object progressMonitorLock;
 
     private long totalSize;
     private String fileName;
@@ -48,8 +51,8 @@ public class ProgressMonitor extends Thread {
 
             // notify Downloader that download finished
             if (runningThreads.get() == 0) {
-                synchronized (monitorLock) {
-                    monitorLock.notifyAll();
+                synchronized (progressMonitorLock) {
+                    progressMonitorLock.notifyAll();
                 }
                 break;
             }

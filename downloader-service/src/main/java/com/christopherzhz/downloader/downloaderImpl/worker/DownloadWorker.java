@@ -31,41 +31,43 @@ public class DownloadWorker extends Thread {
 
     private AtomicLong downloadedSize;
     private AtomicInteger runningThreads;
+    private final Object networkMonitorLock;
+    private final NetworkMonitor networkMonitor;
 
     @Override
     public void run() {
         runningThreads.incrementAndGet();
         localDownloadedSize.set((long)0);
-        boolean success;
-//        int trying = 0;
-//        while (trying < MAX_CONNECT_ATTEMPTS) {
         while (true) {
-            success = partialDownload();
-            if (success) {
-                LOG.debug("[Thread #" + threadCnt + "] : partialDownload success.");
-                break;
+            boolean success = false;
+            int trying = 0;
+            while (trying < MAX_CONNECT_ATTEMPTS) {
+                success = partialDownload();
+                if (success) {
+                    LOG.debug("[Thread #" + threadCnt + "] : partialDownload success.");
+                    break;
+                }
+                LOG.debug("[Thread #" + threadCnt + "] : partialDownload failed. Retrying..");
+                trying++;
             }
-            LOG.debug("[Thread #" + threadCnt + "] : partialDownload failed. Retrying..");
-//            trying++;
-
-            // Re-trying every 4 seconds
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException ie) {
-                LOG.error("[InterruptedException] Retrying sleep interrupted!");
+            if (success) break;
+            if (trying == MAX_CONNECT_ATTEMPTS) {
+                try {
+                    networkMonitor.start();
+                    LOG.debug("STARTED network monitor!");
+                } catch (IllegalThreadStateException itse) {
+                    // it's fine because other download worker has started the network monitor
+                    LOG.debug("Duplicated monitor start attempt.");
+                }
+                try {
+                    synchronized (networkMonitorLock) {
+                        networkMonitorLock.wait();
+                    }
+                } catch (InterruptedException ie) {
+                    LOG.error("[InterruptedException] Network monitor interrupted!");
+                }
             }
         }
-
-//        if (trying == MAX_CONNECT_ATTEMPTS) {
-//            try {
-//                synchronized (lockObj) {
-//                    lockObj.wait();
-//                }
-//            } catch (InterruptedException ie) {
-//                LOG.error("[InterruptedException] Network monitor interrupted!");
-//                throw ie;
-//            }
-//        }
         runningThreads.decrementAndGet();
     }
 

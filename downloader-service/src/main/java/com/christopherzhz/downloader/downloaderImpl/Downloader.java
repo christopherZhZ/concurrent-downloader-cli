@@ -1,6 +1,7 @@
 package com.christopherzhz.downloader.downloaderImpl;
 
 import com.christopherzhz.downloader.downloaderImpl.worker.DownloadWorker;
+import com.christopherzhz.downloader.downloaderImpl.worker.NetworkMonitor;
 import com.christopherzhz.downloader.downloaderImpl.worker.ProgressMonitor;
 import lombok.ToString;
 import org.slf4j.Logger;
@@ -34,8 +35,11 @@ public class Downloader {
     private boolean hasResumeFeature;
     private String taskID;
 
-    // a lock object for monitor
-    @ToString.Exclude private Object monitorLock = new Object();
+    // a lock object for progress monitor
+    @ToString.Exclude private final Object progressMonitorLock = new Object();
+
+    // a lock object for network monitor
+    @ToString.Exclude private final Object networkMonitorLock = new Object();
 
     // an atomic size accumulator representing downloaded file size
     @ToString.Exclude AtomicLong downloadedSize = new AtomicLong(0);
@@ -80,9 +84,14 @@ public class Downloader {
         raf.setLength(fileSize);
         raf.close();
 
+        // create the network monitor
+        NetworkMonitor nm = new NetworkMonitor(networkMonitorLock);
+
         // start download workers (threads)
         if (shouldUseSingleThread()) {
-            new DownloadWorker(0, 0, fileSize-1, destFile, url, downloadedSize, runningThreads)
+            new DownloadWorker(0, 0, fileSize-1,
+                               destFile, url, downloadedSize, runningThreads,
+                               networkMonitorLock, nm)
                 .start();
         } else {
             long blockSize = fileSize / NTHREADS;
@@ -90,7 +99,9 @@ public class Downloader {
                 .forEach(threadCnt -> {
                     long start = blockSize * threadCnt;
                     long end = threadCnt == NTHREADS - 1 ? fileSize - 1 : start + blockSize - 1;
-                    new DownloadWorker(threadCnt, start, end, destFile, url, downloadedSize, runningThreads)
+                    new DownloadWorker(threadCnt, start, end,
+                                       destFile, url, downloadedSize, runningThreads,
+                                       networkMonitorLock, nm)
                         .start();
                 });
         }
@@ -100,8 +111,8 @@ public class Downloader {
 
         // wait for progress monitor to notify the completion
         try {
-            synchronized (monitorLock) {
-                monitorLock.wait();
+            synchronized (progressMonitorLock) {
+                progressMonitorLock.wait();
             }
         } catch (InterruptedException ie) {
             LOG.error("[InterruptedException] Download interrupted!");
@@ -148,7 +159,7 @@ public class Downloader {
     }
 
     private void startMonitoring(String fileName) {
-        ProgressMonitor pm = new ProgressMonitor(downloadedSize, runningThreads, monitorLock, fileSize, fileName);
+        ProgressMonitor pm = new ProgressMonitor(downloadedSize, runningThreads, progressMonitorLock, fileSize, fileName);
         pm.setDaemon(true);
         pm.start();
     }
