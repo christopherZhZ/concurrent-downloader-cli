@@ -54,7 +54,7 @@ public class Downloader {
         String fullPath =  processedDir + File.separator + getFileNameByUrl(processedUrl);
         this.url = new URL(processedUrl);
         this.destFile = new File(fullPath);
-        this.NTHREADS = optimizeNThreads(nThreads);
+        this.NTHREADS = nThreads;
         this.taskID = UUID.randomUUID().toString();
     }
 
@@ -115,19 +115,18 @@ public class Downloader {
 
     private void initConnection() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(READ_TIMEOUT);
+        // fake as a browser client to avoid 403
+        conn.setRequestProperty(USER_AGENT, BROWSER_AGENT);
         conn.setRequestProperty(RANGE, genRangeString(0, -1));
+        conn.setReadTimeout(READ_TIMEOUT);
         int trying = 0, resCode;
         while (trying < MAX_CONNECT_ATTEMPTS) {
             try {
                 conn.connect();
                 resCode = conn.getResponseCode();
-
-                if (resCode == 403) {
-                    // TODO: fake as browser
-                }
-                hasResumeFeature = resCode == 206;
                 LOG.debug("initConnection: res code: " + conn.getResponseCode());
+
+                hasResumeFeature = resCode == 206;
                 break;
             } catch (ConnectException ce) {
                 LOG.error("[ConnectException] Connection failed! Retrying..");
@@ -138,6 +137,9 @@ public class Downloader {
             throw new ConnectException("Cannot connect to the given URL");
         }
         fileSize = conn.getContentLengthLong();
+        // adjust nThreads wisely
+        NTHREADS = optimizeNThreads(NTHREADS, fileSize);
+        LOG.debug("initConnection: optimizeNT result: " + NTHREADS);
         LOG.debug("Connection established!");
     }
 

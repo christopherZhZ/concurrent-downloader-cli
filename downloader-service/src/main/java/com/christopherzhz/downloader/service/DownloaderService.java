@@ -44,7 +44,6 @@ public class DownloaderService {
             Downloader downloader = new Downloader(url, destDir, nThreads);
             downloader.download();
         } catch (IOException | InterruptedException exp) {
-            System.out.println("*** exp class : "+exp.getClass());
             return fail(exp.getMessage());
         }
         return success();

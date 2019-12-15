@@ -25,7 +25,7 @@ public class ProgressMonitor extends Thread {
     @Override
     public void run() {
         System.out.println(String.format("Start downloading file: '%s'", fileName));
-        ProgressBar pb = new ProgressBar("Downloading", 100);
+        ProgressBar pb = new ProgressBar("Task: " + fileName, 100);
         String totalSizeStr = genFileSizeString(totalSize);
         long sizeCurr, sizeLastSec = 0;
         int percentage;

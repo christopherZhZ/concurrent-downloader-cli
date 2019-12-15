@@ -6,7 +6,7 @@ from cli_config import *
 
 @click.command(short_help=downloader_basic_help_msg)
 @click.argument('url')
-@click.option('-c', default=5, type=click.IntRange(min=1), help='Max number of threads (1-300, default 5)')
+@click.option('-c', default=5, type=click.IntRange(min=1), help='Max number of threads (1-400, default 5)')
 def downloader(url, c):
     """
     \b
@@ -15,7 +15,7 @@ def downloader(url, c):
     downloader <url> -c <nThreads>
     """
     if c > 300:
-        printer.warn('nThreads adjusted to 300 automatically');
+        printer.warn('nThreads adjusted to 400 automatically');
         nThreads = 300
     else:
         nThreads = c

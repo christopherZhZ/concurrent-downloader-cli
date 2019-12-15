@@ -87,15 +87,17 @@ public class DownloadWorker extends Thread {
 
         try {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // fake as a browser client to avoid 403
+            conn.setRequestProperty(USER_AGENT, BROWSER_AGENT);
+            conn.setRequestProperty(RANGE, genRangeString(actualStart, end));
             conn.setConnectTimeout(CONNECT_TIMEOUT);
             conn.setReadTimeout(READ_TIMEOUT);
             conn.setRequestMethod(GET);
-            conn.setRequestProperty(RANGE, genRangeString(actualStart, end));
 
             long size = conn.getHeaderFieldLong("Content-Length", -1);
             long blockSize = end - actualStart + 1;
             if (!resumeAfterRecovery && size != blockSize) {
-                LOG.error("Unexpected block size!");
+                LOG.error("Unexpected block size! size=" + size + " | blockSize=" + blockSize);
                 return false;
             }
 
