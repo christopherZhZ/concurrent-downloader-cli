@@ -121,7 +121,9 @@ public class Downloader {
     }
 
     private void veryLargeFileDownload() throws IOException, InterruptedException {
-        // TODO: very large file download approach
+        // very large file download approach
+        // idea: when a download worker finished its job,
+        //       let it take part of other workers' jobs
     }
 
     private void initConnection() throws IOException {
