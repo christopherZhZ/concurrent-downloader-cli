@@ -1,6 +1,14 @@
 # concurrent-downloader-cli
 A command line tool for concurrently downloading file with given url.
 
+## Features
+
+- Customizable threads number
+- Resuming after recovery from internet failure
+- File partitioned in blocks intelligently, and then concurrently downloaded
+- No quality loss
+- Thread pool for download tasks to avoid throughput degradation and overhead
+
 ## Installation
 
 - Clone the project
@@ -9,6 +17,7 @@ A command line tool for concurrently downloading file with given url.
 ```sh
 pip install -- editable .
 ```
+
 ## Usage
 
 - Go to `/concurrent-downloader-cli/downloader-service` in terminal
