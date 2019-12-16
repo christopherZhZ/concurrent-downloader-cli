@@ -53,11 +53,15 @@ public class DownloaderService {
         } else {
             urlDestMap.get(url).add(destDir);
         }
+        Downloader downloader = null;
         try {
-            Downloader downloader = new Downloader(url, destDir, nThreads);
+            downloader = new Downloader(url, destDir, nThreads);
             downloader.download();
-        } catch (IOException | InterruptedException exp) {
-            return fail(exp.getMessage());
+        } catch (Exception exp) {
+            if (downloader != null) {
+                downloader.getDestFile().delete();
+            }
+            return fail(String.format("[%s] %s", exp.getClass().getSimpleName(), exp.getMessage()));
         } finally {
             urlDestMap.get(url).remove(destDir);
         }

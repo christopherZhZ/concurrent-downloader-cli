@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import static com.christopherzhz.downloader.utils.Constant.*;
 
@@ -35,8 +34,7 @@ public class NetworkMonitor extends Thread {
                     break;
                 }
 
-                // check every 5 seconds
-                Thread.sleep(5000);
+                Thread.sleep(NETWORK_CHECK_FREQ);
             } catch (IOException | InterruptedException ex) {
                 LOG.error("[Exception] Network monitoring interrupted!");
             }

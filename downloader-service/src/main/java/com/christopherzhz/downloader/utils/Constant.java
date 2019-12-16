@@ -6,16 +6,17 @@ public class Constant {
     public static final long SIZE_THRESH = 1024;
     public static final int CONNECT_TIMEOUT = 120000; // 2 min
     public static final int READ_TIMEOUT = 5000; // 5 sec
+    public static final int NETWORK_CHECK_FREQ = 10000; // 10 sec
     public static final int MAX_CONNECT_ATTEMPTS = 5;
 
     // async configs
-    public static final int QUEUE_CAPACITY = 100; // as many tasks as user can wait on
-    public static final int CORE_POOL_SIZE = 8; // constraint by number of logical cores of server machine's CPU
-    public static final int MAX_POOL_SIZE = 16;
+    public static final int QUEUE_CAPACITY = 100;
+    public static final int CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors();
+    public static final int MAX_POOL_SIZE = CORE_POOL_SIZE;
 
     // thresholds
     public static final long LARGE_FILE_LINE = SIZE_THRESH*SIZE_THRESH*SIZE_THRESH*10; // 10GB
-    public static final int MAX_NUM_THREADS = 400;
+    public static final int MAX_NUM_THREADS = 300;
     public static final long MIN_BYTES_TO_SPLIT_THREAD = SIZE_THRESH*SIZE_THRESH*5; // 5 MB
     public static final long MAX_BYTES_PER_THREAD_IDEALLY = SIZE_THRESH*SIZE_THRESH*200; // 200 MB
 
@@ -27,9 +28,4 @@ public class Constant {
     public static final String PING_CMD = "ping -c 1 www.google.com";
     public static final String STATUS_SUCCESS = "success";
     public static final String STATUS_FAIL = "fail";
-
-    // test urls
-    public static final String URL_16MB = "http://mirror.filearena.net/pub/speed/SpeedTest_16MB.dat?_ga=2.160681917.1281845165.1575751193-1985933931.1575751193";
-    public static final String URL_32MB = "http://mirror.filearena.net/pub/speed/SpeedTest_32MB.dat?_ga=2.160681917.1281845165.1575751193-1985933931.1575751193";
-    public static final String URL_100MB = "http://speedtest.dallas.linode.com/100MB-dallas.bin";
 }

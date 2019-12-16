@@ -3,6 +3,7 @@ package com.christopherzhz.downloader.downloaderImpl;
 import com.christopherzhz.downloader.downloaderImpl.worker.DownloadWorker;
 import com.christopherzhz.downloader.downloaderImpl.worker.NetworkMonitor;
 import com.christopherzhz.downloader.downloaderImpl.worker.ProgressMonitor;
+import lombok.Getter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class Downloader {
     private static Logger LOG = LoggerFactory.getLogger(Downloader.class.getSimpleName());
 
     private URL url;
-    private File destFile;
+    @Getter private File destFile;
     private int NTHREADS;
     private long fileSize;
     private boolean hasResumeFeature;
@@ -69,11 +70,11 @@ public class Downloader {
         // log basic info
         LOG.debug("[------TARGET FILE INFO------] " + this.toString());
 
-        if (fileSize < LARGE_FILE_LINE) {
+//        if (fileSize < LARGE_FILE_LINE) {
             regularFileDownload();
-        } else {
-            veryLargeFileDownload();
-        }
+//        } else {
+//            veryLargeFileDownload();
+//        }
 
         LOG.debug("[------DOWNLOAD FINISHED------] ");
     }
@@ -169,6 +170,6 @@ public class Downloader {
     // for testing purpose
     public static void main(String[] args) throws IOException, InterruptedException {
         String testDestPath = "/Users/frankmac/Downloads";
-        new Downloader(URL_100MB, testDestPath, 5).download();
+        new Downloader("http://speedtest.dallas.linode.com/100MB-dallas.bin", testDestPath, 5).download();
     }
 }
