@@ -1,0 +1,29 @@
+# 16MB
+downloader http://mirror.filearena.net/pub/speed/SpeedTest_16MB.dat?_ga=2.131850255.1281845165.1575751193-1985933931.1575751193 -c 1
+
+# 16MB txt
+downloader http://www.txt81.com/Txt_9605/%E8%B5%84%E6%B2%BB%E9%80%9A%E9%89%B4%E7%99%BD%E8%AF%9D%E6%96%87.txt -c 1
+
+# 32MB
+downloader http://mirror.filearena.net/pub/speed/SpeedTest_32MB.dat?_ga=2.160681917.1281845165.1575751193-1985933931.1575751193 -c 1
+
+# 100MB
+downloader http://speedtest.dallas.linode.com/100MB-dallas.bin -c 4
+
+# 512MB
+downloader http://mirror.filearena.net/pub/speed/SpeedTest_512MB.dat?_ga=2.247508430.87081591.1575845127-1985933931.1575751193 -c 8
+
+# 2GB
+downloader http://mirror.filearena.net/pub/speed/SpeedTest_2048MB.dat?_ga=2.132610190.1856867879.1576362399-1985933931.1575751193 -c 10
+
+# 10GB
+downloader https://speed.hetzner.de/10GB.bin -c 25
+
+# 5MB (anti-scraping)
+downloader http://ipv4.download.thinkbroadband.com/5MB.zip -c 1
+
+# 512MB (anti-scraping)
+downloader http://ipv4.download.thinkbroadband.com/512MB.zip -c 5
+
+#### for each download, install and run `aria2c <url>`
+#### then compare the 2 download results using `cmp -b <file1> <file2>`
